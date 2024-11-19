@@ -1,0 +1,14 @@
+{
+  "aboutus": "À propos de nous",
+  "test": "Témoignages",
+  "history": "Historique de mes trajets",
+  "support": "Recommendations",
+  "supportDes": "Si vous avez des questions ou des recommandations concernant l'application, veuillez envoyer un e-mail au support",
+  "supportEmail": "Envoyez-nous un courriel",
+  "story": "Notre histoire",
+  "ourStory": "Dans la ville animée de Casablanca, une touriste nommée Carla part à l'exploration. Désireuse de voir les sites touristiques, elle a hélé un taxi et a fait confiance au chauffeur souriant. Cependant, alors que le chauffeur faisait des détours et montait le compteur, Carla s'est retrouvée perdue dans des histoires plutôt que dans des points de repère. À son arrivée, le tarif était incroyablement élevé et elle s'est rendu compte qu'elle avait été surfacturée.\n\nDéterminée à aider les autres à éviter des expériences similaires, Carla a partagé son histoire sur les réseaux sociaux, déclenchant un appel à la transparence. Inspirés par cela, nous avons créé Lynaro, une application mobile qui calcule le tarif exact pour chaque trajet, garantissant l'honnêteté et des prix équitables dans les taxis marocains.",
+  "mission": "Notre mission",
+  "ourMission": "Lynaro permet aux passagers de profiter d'une expérience de taxi transparente et équitable. Notre algorithme de comptage calcule le tarif correct à la fin de chaque trajet, permettant aux passagers et aux conducteurs de se mettre d'accord sur un prix équitable. Lynaro n'est pas là pour remplacer les taxis au Maroc mais pour encourager les chauffeurs à démarrer leurs compteurs et instaurer la confiance avec les passagers.",
+  "use": "Comment utiliser Lynaro",
+  "useto": " 1. Démarrez Lynaro lorsque votre chauffeur de taxi commence le trajet.\n 2. Autorisez l'application à calculer le tarif exact à l'aide de notre algorithme.\n 3. À votre arrivée, Lynaro affichera le tarif précis à payer.\n Lynaro est votre compagnon. pour un voyage équitable à chaque fois!"
+}

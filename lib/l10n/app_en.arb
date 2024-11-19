@@ -1,0 +1,14 @@
+{
+  "aboutus": "About Us",
+  "test": "Testimonials",
+  "history": "History of my journeys",
+  "support": "Support",
+  "supportDes": "If you have any questions or recommendations about the application, please send an email to support",
+  "supportEmail": "Email Us",
+  "story": "Our Story",
+  "ourStory": "In the vibrant city of Casablanca, a tourist named Carla set out to explore. Eager to see the sights, she hailed a cab and trusted the smiling driver. However, as the driver took detours and turned up the meter, Carla found herself lost in stories instead of landmarks. Upon arrival, the fare was shockingly high, and she realized she'd been overcharged.\n\nDetermined to help others avoid similar experiences, Carla shared her story on social media, sparking a call for transparency. Inspired by this, we created Lynaro—a mobile app that calculates the exact fare for each journey, ensuring honesty and fair pricing in Morocco's taxis.",
+  "mission": "Our Mission",
+  "ourMission": "Lynaro empowers passengers to enjoy a transparent and fair taxi experience. Our metering algorithm calculates the correct fare at the end of each ride, allowing passengers and drivers to agree on a fair price. Lynaro isn't here to replace taxis in Morocco but to encourage drivers to start their meters and build trust with passengers.",
+  "use": "How to Use Lynaro",
+  "useto": " 1. Start Lynaro when your cab driver begins the journey.\n 2. Allow the app to calculate the exact fare using our algorithm.\n 3. Upon arrival, Lynaro will display the accurate fare to pay.\n Lynaro is your companion for a fair journey every time!"
+}
