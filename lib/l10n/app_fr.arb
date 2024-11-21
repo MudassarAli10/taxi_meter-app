@@ -10,5 +10,14 @@
   "mission": "Notre mission",
   "ourMission": "Lynaro permet aux passagers de profiter d'une expérience de taxi transparente et équitable. Notre algorithme de comptage calcule le tarif correct à la fin de chaque trajet, permettant aux passagers et aux conducteurs de se mettre d'accord sur un prix équitable. Lynaro n'est pas là pour remplacer les taxis au Maroc mais pour encourager les chauffeurs à démarrer leurs compteurs et instaurer la confiance avec les passagers.",
   "use": "Comment utiliser Lynaro",
-  "useto": " 1. Démarrez Lynaro lorsque votre chauffeur de taxi commence le trajet.\n 2. Autorisez l'application à calculer le tarif exact à l'aide de notre algorithme.\n 3. À votre arrivée, Lynaro affichera le tarif précis à payer.\n Lynaro est votre compagnon. pour un voyage équitable à chaque fois!"
+  "useto": " 1. Démarrez Lynaro lorsque votre chauffeur de taxi commence le trajet.\n 2. Autorisez l'application à calculer le tarif exact à l'aide de notre algorithme.\n 3. À votre arrivée, Lynaro affichera le tarif précis à payer.\n Lynaro est votre compagnon. pour un voyage équitable à chaque fois!",
+  "destination": "Entrez votre destination",
+  "route": "Obtenir l'itinéraire",
+  "basePrice": "Prix de base en DH",
+  "setPrice": "Fixer le prix",
+  "time": "temps",
+  "tripFinish": "Voyage terminé",
+  "price": "Prix",
+  "noTripYet": "Pas encore de voyage",
+  "recentTrip": "Voyage récent"
 }

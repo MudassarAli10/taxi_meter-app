@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
@@ -7,6 +9,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+
+import '../controller/trip.dart';
+import '../controller/trip_repository.dart';
 
 class GoogleMapActivity extends StatefulWidget {
   const GoogleMapActivity({super.key});
@@ -17,9 +22,10 @@ class GoogleMapActivity extends StatefulWidget {
 
 class _GoogleMapActivityState extends State<GoogleMapActivity> {
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(37.4223, -122.0848);
+
+  // final LatLng _center = const LatLng(37.4223, -122.0848);
   LatLng _currentPosition = const LatLng(37.3861, -122.0839);
-  LatLng? destinationLatLng;  // Declare destinationLatLng here
+  LatLng? destinationLatLng; // Declare destinationLatLng here
 
   bool isPermissionGranted = false;
   final TextEditingController _destinationController = TextEditingController();
@@ -27,10 +33,205 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
   List<LatLng> polylineCoordinates = [];
   late Polyline polyline;
 
+  bool isMeterRunning = false;
+  bool showLocationFloatingButton = true; // Flag to control button visibility
+
+  double totalDistance = 0.0; // Total distance in meters
+  double basePrice = 0.0; // Base price set by user
+  double totalPrice = 0.0; // Total calculated price
+  Duration totalTime = Duration.zero; // Total trip duration
+
+  StreamSubscription<Position>? positionStream;
+
   @override
   void initState() {
     super.initState();
     _requestPermission();
+  }
+
+  @override
+  void dispose() {
+    positionStream?.cancel();
+    super.dispose();
+  }
+
+  //new
+  Future<void> _startMeter() async {
+    totalDistance = 0.0;
+    totalTime = Duration.zero;
+    totalPrice = basePrice;
+
+    Position? lastPosition;
+
+    positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 5, // Update every 5 meters
+      ),
+    ).listen((Position position) {
+      if (lastPosition != null) {
+        double distance = Geolocator.distanceBetween(
+          lastPosition!.latitude,
+          lastPosition!.longitude,
+          position.latitude,
+          position.longitude,
+        );
+
+        // Update distance and calculate price only if the car is moving
+        if (position.speed > 0) {
+          setState(() {
+            totalDistance += distance;
+            totalPrice =
+                basePrice + (totalDistance / 1000) * 2.5; // e.g., 2.5 DH per km
+            totalTime +=
+                const Duration(seconds: 5); // Assuming updates every 5 seconds
+          });
+        }
+
+        // Update the polyline
+        _updatePolyline(position);
+      }
+
+      lastPosition = position;
+
+      // Update the map camera
+      mapController.animateCamera(CameraUpdate.newLatLng(
+        LatLng(position.latitude, position.longitude),
+      ));
+    });
+
+    setState(() {
+      isMeterRunning = true;
+    });
+  }
+
+  void _stopMeter() async {
+    positionStream?.cancel();
+    setState(() {
+      isMeterRunning = false;
+    });
+
+    // Create a new trip object
+    final newTrip = Trip(
+      distance: totalDistance / 1000, // in kilometers
+      duration: totalTime,
+      price: totalPrice,
+    );
+
+    // Save to shared preferences
+    final trips = await TripHistoryRepository.getTrips();
+    trips.insert(0, newTrip); // Add the new trip to the beginning of the list
+
+    // Keep only the last 5 trips
+    final updatedTrips = trips.take(5).toList();
+    await TripHistoryRepository.saveTrips(updatedTrips);
+
+    // Display Snackbar with results
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.blue[500],
+      content: Center(
+        child: Text(
+          '${AppLocalizations.of(context)!.tripFinish}\n'
+          '${AppLocalizations.of(context)!.time}: ${totalTime.inMinutes} min\n'
+          'Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km\n'
+          '${AppLocalizations.of(context)!.price}: ${totalPrice.toStringAsFixed(2)} DH',
+          style: const TextStyle(
+              fontFamily: 'Hellix', color: Colors.white, fontSize: 20),
+        ),
+      ),
+      duration: const Duration(seconds: 5),
+    ));
+  }
+
+  void _showBasePriceDialog() {
+    TextEditingController priceController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          // title: const Text("Set Base Price"),
+          content: TextField(
+            cursorColor: Colors.white,
+            controller: priceController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(
+                CupertinoIcons.money_euro,
+                color: Colors.white,
+              ),
+              hintText: AppLocalizations.of(context)!.basePrice,
+              hintStyle:
+                  const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
+              filled: true,
+              fillColor: Colors.blue[600],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+                onPressed: () {
+                  setState(() {
+                    basePrice = double.tryParse(priceController.text) ?? 0.0;
+                    // Ensure the UI updates after setting the price
+                    totalPrice =
+                        basePrice; // Reset totalPrice after base price is set
+                  });
+                  Navigator.pop(context);
+                },
+                child:  Text(
+                  AppLocalizations.of(context)!.setPrice,
+                  style:const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updatePolyline(Position position) {
+    if (polylineCoordinates.isEmpty) return;
+
+    LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+
+    // Remove the coordinates the user has passed
+    while (polylineCoordinates.isNotEmpty) {
+      double distance = Geolocator.distanceBetween(
+        currentLatLng.latitude,
+        currentLatLng.longitude,
+        polylineCoordinates.first.latitude,
+        polylineCoordinates.first.longitude,
+      );
+
+      if (distance < 10) {
+        // If the first point is within 10 meters, remove it
+        polylineCoordinates.removeAt(0);
+      } else {
+        break;
+      }
+    }
+
+    setState(() {
+      polyline = Polyline(
+        polylineId: const PolylineId("route"),
+        points: polylineCoordinates,
+        color: Colors.blue,
+        width: 5,
+      );
+    });
   }
 
   Future<void> _requestPermission() async {
@@ -78,8 +279,10 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
 
   void _showLocationInputDialog() {
     showDialog(
+
       context: context,
       builder: (context) => AlertDialog(
+
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
@@ -96,9 +299,10 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                 try {
                   Prediction? prediction = await PlacesAutocomplete.show(
                     context: context,
-                    apiKey: 'AIzaSyBZPNNxjrwEruh44L0o5oAMHQMuaiz-N_4', // Use your actual API key
+                    apiKey: 'AIzaSyBZPNNxjrwEruh44L0o5oAMHQMuaiz-N_4',
+                    // Use your actual API key
                     components: [const Component(Component.country, 'pk')],
-                    language: 'en',
+                    language: 'fr',
                   );
 
                   if (prediction != null) {
@@ -114,7 +318,9 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                   CupertinoIcons.location,
                   color: Colors.white,
                 ),
-                hintText: "Enter your destination",
+                hintText: AppLocalizations.of(context)!.destination,
+                hintStyle:
+                    const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
                 filled: true,
                 fillColor: Colors.blue[600],
                 border: OutlineInputBorder(
@@ -123,19 +329,34 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                String destination = _destinationController.text;
-                if (destination.isNotEmpty) {
-                  _getRoute(destination); // Pass the destination text to _getRoute
-                } else {
-                  print("Please enter a destination.");
-                }
+            const SizedBox(
+              height: 15,
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+                onPressed: () {
+                  String destination = _destinationController.text;
+                  if (destination.isNotEmpty) {
+                    _getRoute(
+                        destination); // Pass the destination text to _getRoute
+                  } else {
+                    print("Please enter a destination.");
+                  }
 
-                Navigator.pop(context);
-              },
-
-              child: const Text('Search Place'),
+                  Navigator.pop(context);
+                  _showBasePriceDialog();
+                },
+                child:  Text(
+                  AppLocalizations.of(context)!.route,
+                  style:const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
+                ),
+              ),
             ),
           ],
         ),
@@ -222,14 +443,15 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
         children: [
           GoogleMap(
             onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(target: _center, zoom: 13),
+            initialCameraPosition:
+                CameraPosition(target: _currentPosition, zoom: 13),
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
             markers: {
-              Marker(
-                markerId: const MarkerId('currentLocation'),
-                position: _currentPosition,
-              ),
+              // Marker(
+              //   markerId: const MarkerId('currentLocation'),
+              //   position: _currentPosition,
+              // ),
               if (destinationLatLng != null)
                 Marker(
                   markerId: const MarkerId('destination'),
@@ -241,15 +463,60 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
               if (polylineCoordinates.isNotEmpty) polyline,
             },
           ),
+          if (isMeterRunning)
+            Positioned(
+
+              bottom: 16,
+              left: 16,
+              right: 16,
+              child: Card(
+                color: Colors.blue[600],
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("${AppLocalizations.of(context)!.time}: ${totalTime.inMinutes} min", style: const TextStyle(
+                          fontFamily: 'Hellix',
+                          color: Colors.white,
+                          fontSize: 20)),
+                      Text(
+                          "Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km", style: const TextStyle(
+                          fontFamily: 'Hellix',
+                          color: Colors.white,
+                          fontSize: 20)),
+                      Text(
+                        "${AppLocalizations.of(context)!.price}: ${totalPrice.toStringAsFixed(2)} DH",
+                        style: const TextStyle(
+                            fontFamily: 'Hellix',
+                            color: Colors.white,
+                            fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
       floatingActionButton: isPermissionGranted
           ? FloatingActionButton(
+              backgroundColor: Colors.blue[400],
+              onPressed: () {
+                _getCurrentLocation();
+                setState(() {
+                  // Hide the "Go to Live Location" button and show the "Play" button
+                  isPermissionGranted = false;
+                });
+              },
+              child: const Icon(Icons.my_location, color: Colors.white),
+            )
+          : FloatingActionButton(
         backgroundColor: Colors.blue[400],
-        onPressed: _getCurrentLocation,
-        child: const Icon(Icons.my_location, color: Colors.white),
-      )
-          : null,
+              onPressed: isMeterRunning ? _stopMeter : _startMeter,
+              child: Icon(isMeterRunning ? Icons.stop : Icons.play_arrow ,color: Colors.white,),
+            ),
     );
   }
 }

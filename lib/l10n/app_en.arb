@@ -10,5 +10,14 @@
   "mission": "Our Mission",
   "ourMission": "Lynaro empowers passengers to enjoy a transparent and fair taxi experience. Our metering algorithm calculates the correct fare at the end of each ride, allowing passengers and drivers to agree on a fair price. Lynaro isn't here to replace taxis in Morocco but to encourage drivers to start their meters and build trust with passengers.",
   "use": "How to Use Lynaro",
-  "useto": " 1. Start Lynaro when your cab driver begins the journey.\n 2. Allow the app to calculate the exact fare using our algorithm.\n 3. Upon arrival, Lynaro will display the accurate fare to pay.\n Lynaro is your companion for a fair journey every time!"
+  "useto": " 1. Start Lynaro when your cab driver begins the journey.\n 2. Allow the app to calculate the exact fare using our algorithm.\n 3. Upon arrival, Lynaro will display the accurate fare to pay.\n Lynaro is your companion for a fair journey every time!",
+  "destination": "Enter Your Destination",
+  "route": "Get Route",
+  "basePrice": "Base Price in DH",
+  "setPrice": "Set Price",
+  "time": "Time",
+  "tripFinish": "Trip Finished",
+  "price": "Price",
+  "noTripYet": "No Trip Yet",
+  "recentTrip": "Recent Trip"
 }

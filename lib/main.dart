@@ -28,13 +28,13 @@ class MyApp extends StatelessWidget {
       child: Consumer<LanguageChangeController>(
         builder: (context, provider, child) {
           if (locale.isEmpty) {
-            provider.changeLanguage(Locale('en'));
+            provider.changeLanguage(const Locale('en'));
           }
           return MaterialApp(
             locale: locale == ''
-                ? Locale('en')
+                ? const Locale('en')
                 : provider.appLocale == null
-                    ? Locale('en')
+                    ? const Locale('en')
                     : provider
                         .appLocale, // Set a default locale if appLocale is null
             localizationsDelegates: const [
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
               Locale('fr'),
             ],
             debugShowCheckedModeBanner: false,
-            home: SplashScreen(),
+            home: const SplashScreen(),
           );
         },
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taxi_meter_apps/screens/history_screen.dart';
 import 'package:taxi_meter_apps/screens/support.dart';
 import 'package:taxi_meter_apps/screens/testimonial.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -58,7 +59,12 @@ class DrawerWidget extends StatelessWidget {
               leading: const Icon(Icons.history, color: Colors.white),
               title:  Text(AppLocalizations.of(context)!.history,
                   style: const TextStyle(color: Colors.white,fontFamily: 'Hellix',fontSize: 18)),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (contex) =>const HistoryScreen()));
+              },
             ),
             ListTile(
               leading: const Icon(CupertinoIcons.hand_thumbsup_fill,
