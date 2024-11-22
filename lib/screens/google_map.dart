@@ -33,6 +33,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
   List<LatLng> polylineCoordinates = [];
   late Polyline polyline;
 
+  bool isLoading = false;
   bool isMeterRunning = false;
   bool showLocationFloatingButton = true; // Flag to control button visibility
 
@@ -129,21 +130,43 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
     // Display Snackbar with results
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: Colors.blue[500],
-      content: Center(
-        child: Text(
-          '${AppLocalizations.of(context)!.tripFinish}\n'
-          '${AppLocalizations.of(context)!.time}: ${totalTime.inMinutes} min\n'
-          'Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km\n'
-          '${AppLocalizations.of(context)!.price}: ${totalPrice.toStringAsFixed(2)} DH',
-          style: const TextStyle(
-              fontFamily: 'Hellix', color: Colors.white, fontSize: 20),
-        ),
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // Ensures content is spaced out
+        children: [
+          Expanded(
+            child: Text(
+              '${AppLocalizations.of(context)!.tripFinish}\n'
+                  '${AppLocalizations.of(context)!.time}: ${totalTime
+                  .inMinutes} min\n'
+                  'Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km\n'
+                  '${AppLocalizations.of(context)!.price}: ${totalPrice
+                  .toStringAsFixed(2)} DH',
+              style: const TextStyle(
+                  fontFamily: 'Hellix', color: Colors.white, fontSize: 20),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              // Dismiss the SnackBar when the close button is pressed
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              setState(() {
+                // Hide the "Go to Live Location" button and show the "Play" button
+                isPermissionGranted = true;
+                polylineCoordinates.clear();
+              });
+            },
+            child: const Text(
+              'Close',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
-      duration: const Duration(seconds: 5),
+      duration: const Duration(minutes: 25), // SnackBar won't auto-dismiss
     ));
   }
-
-  void _showBasePriceDialog() {
+    void _showBasePriceDialog() {
     TextEditingController priceController = TextEditingController();
 
     showDialog(
@@ -465,7 +488,6 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
           ),
           if (isMeterRunning)
             Positioned(
-
               bottom: 16,
               left: 16,
               right: 16,

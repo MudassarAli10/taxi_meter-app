@@ -19,5 +19,11 @@
   "tripFinish": "Trip Finished",
   "price": "Price",
   "noTripYet": "No Trip Yet",
-  "recentTrip": "Recent Trip"
+  "recentTrip": "Recent Trip",
+  "chooseYourPackage": "Choose Your Package",
+  "saveUpto": "Save up to",
+  "flexiblePayment": "Flexible Payment Option",
+  "monthly": "Monthly",
+  "annual": "Annual",
+  "subscribe": "Subscribe"
 }

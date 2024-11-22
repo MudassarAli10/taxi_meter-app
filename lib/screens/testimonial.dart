@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class Testimonial {
   final String name;
   final int age;
@@ -65,11 +64,18 @@ class TestimonialScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar:AppBar(
-        title:  Text(
+      appBar: AppBar(
+        title: Text(
           AppLocalizations.of(context)!.test,
-          style: const TextStyle(color: Colors.white,fontFamily: 'Hellix'),
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Hellix',
+            fontSize: screenWidth * 0.06, // Responsive font size
+          ),
         ),
         backgroundColor: Colors.blue.shade600,
         centerTitle: true,
@@ -79,34 +85,42 @@ class TestimonialScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-
       ),
       body: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.04,
+          vertical: screenHeight * 0.02,
+        ),
         color: Colors.blue[500],
         child: ListView.builder(
           itemCount: testimonials.length,
           itemBuilder: (context, index) {
             final testimonial = testimonials[index];
             return Card(
-              margin:const EdgeInsets.symmetric(vertical: 10),
+              margin: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.015,
+              ),
               elevation: 4,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(screenWidth * 0.04),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(screenWidth * 0.04),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Icon(CupertinoIcons.person, color: Colors.blue[600], size: 30),
-                        const SizedBox(width: 10),
+                        Icon(
+                          CupertinoIcons.person,
+                          color: Colors.blue[600],
+                          size: screenWidth * 0.08, // Responsive icon size
+                        ),
+                        SizedBox(width: screenWidth * 0.03),
                         Text(
                           testimonial.name,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: screenWidth * 0.045,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Hellix',
                             color: Colors.blue[600],
@@ -114,26 +128,30 @@ class TestimonialScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: screenHeight * 0.01),
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.blue[300], size: 20),
-                        const SizedBox(width: 5),
+                        Icon(
+                          Icons.location_on,
+                          color: Colors.blue[300],
+                          size: screenWidth * 0.05,
+                        ),
+                        SizedBox(width: screenWidth * 0.02),
                         Text(
                           testimonial.city,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: screenWidth * 0.04,
                             color: Colors.blue[600],
                             fontFamily: 'Hellix',
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: screenHeight * 0.015),
                     Text(
                       testimonial.message,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: screenWidth * 0.04,
                         color: Colors.grey[800],
                         height: 1.5,
                         fontFamily: 'Hellix',

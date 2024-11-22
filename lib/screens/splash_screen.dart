@@ -51,6 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.5,
+                fontFamily: 'Hellix'
               ),
             ),
           ],

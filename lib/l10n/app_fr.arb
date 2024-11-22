@@ -19,5 +19,11 @@
   "tripFinish": "Voyage terminé",
   "price": "Prix",
   "noTripYet": "Pas encore de voyage",
-  "recentTrip": "Voyage récent"
+  "recentTrip": "Voyage récent",
+  "chooseYourPackage": "Choisissez votre forfait",
+  "saveUpto": "Économisez jusqu'à",
+  "flexiblePayment": "Option de paiement flexible",
+  "monthly": "Mensuel",
+  "annual": "Annuel",
+  "subscribe": "s'abonner"
 }

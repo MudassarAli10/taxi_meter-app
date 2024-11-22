@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../controller/trip.dart';
 import '../controller/trip_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -30,11 +28,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
-        title:  Text(
+        title: Text(
           AppLocalizations.of(context)!.history,
-          style:const TextStyle(color: Colors.white,fontFamily: 'Hellix'),
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Hellix',
+            fontSize: screenWidth * 0.06, // Responsive font size
+          ),
         ),
         backgroundColor: Colors.blue.shade600,
         centerTitle: true,
@@ -44,34 +49,68 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Navigator.pop(context);
           },
         ),
-
       ),
-      body: trips.isEmpty
-          ?  Center(
-        child: Text(AppLocalizations.of(context)!.noTripYet),
-      )
-          : ListView.builder(
-        itemCount: trips.length,
-        itemBuilder: (context, index) {
-          final trip = trips[index];
-          return Card(
-            color: Colors.blue[500],
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-
-              leading: const Icon(Icons.history, color: Colors.white,),
-              title:  Text(
-                AppLocalizations.of(context)!.recentTrip,
-                style:  const TextStyle(fontWeight: FontWeight.bold,fontFamily: 'Hellix', color: Colors.white,fontSize: 22),
-              ),
-              subtitle: Text(
-                    "${AppLocalizations.of(context)!.time}: ${trip.duration.inMinutes} min\n"
-                "Distance: ${trip.distance.toStringAsFixed(2)} km\n"
-                    "${AppLocalizations.of(context)!.price}: ${trip.price.toStringAsFixed(2)} DH",style: const TextStyle(fontFamily: 'Hellix', color: Colors.white, fontSize: 20),
-              ),
+      body: SafeArea(
+        child: trips.isEmpty
+            ? Center(
+          child: Text(
+            AppLocalizations.of(context)!.noTripYet,
+            style: TextStyle(
+              fontSize: screenWidth * 0.045, // Responsive text size
+              fontFamily: 'Hellix',
             ),
-          );
-        },
+          ),
+        )
+            : ListView.builder(
+          itemCount: trips.length,
+          itemBuilder: (context, index) {
+            final trip = trips[index];
+
+            return Card(
+              color: Colors.blue[500],
+              margin: EdgeInsets.all(screenWidth * 0.03), // Responsive margin
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Stack(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        Icons.history,
+                        color: Colors.white,
+                        size: screenWidth * 0.08, // Responsive icon size
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.recentTrip,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Hellix',
+                          color: Colors.white,
+                          fontSize: screenWidth * 0.05, // Responsive text size
+                        ),
+                      ),
+                      subtitle: Padding(
+                        padding: EdgeInsets.only(top: screenHeight * 0.01),
+                        child: Text(
+                          "${AppLocalizations.of(context)!.time}: ${trip.duration.inMinutes} min\n"
+                              "Distance: ${trip.distance.toStringAsFixed(2)} km\n"
+                              "${AppLocalizations.of(context)!.price}: ${trip.price.toStringAsFixed(2)} DH",
+                          style: TextStyle(
+                            fontFamily: 'Hellix',
+                            color: Colors.white,
+                            fontSize: screenWidth * 0.05, // Responsive text size
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Date at the top-right of the card
+
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

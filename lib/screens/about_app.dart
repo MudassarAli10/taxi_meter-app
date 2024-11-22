@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      //backgroundColor: Colors.blue,
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+ //   final TextScaler textScaleFactor = MediaQuery.of(context).textScaler;
 
+    return Scaffold(
       appBar: AppBar(
-        title:  Text(
+        title: Text(
           AppLocalizations.of(context)!.aboutus,
-          style: const TextStyle(color: Colors.white,fontFamily: 'Hellix'),
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Hellix',
+            fontSize: screenWidth * 0.06, // Responsive font size
+          ),
         ),
         backgroundColor: Colors.blue.shade600,
         centerTitle: true,
@@ -21,91 +28,104 @@ class AboutUsScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Center(
-            //   child: Image.asset(
-            //     'assets/lynaro_logo.png', // Make sure to add your app logo here
-            //     height: 100,
-            //   ),
-            // ),
-            const SizedBox(height: 20),
-             Text(
-              AppLocalizations.of(context)!.story,
-              style:const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                  fontFamily: 'Hellix'
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.05,
+            vertical: screenHeight * 0.02,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: screenHeight * 0.02),
+              Text(
+                AppLocalizations.of(context)!.story,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Hellix',
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.blue[600],
-                borderRadius: BorderRadius.circular(10),
+              SizedBox(height: screenHeight * 0.01),
+              Container(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                decoration: BoxDecoration(
+                  color: Colors.blue[600],
+                  borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.ourStory,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    height: 1.5,
+                    color: Colors.white,
+                    fontFamily: 'Hellix',
+                  ),
+                ),
               ),
-              child:  Text(
-                AppLocalizations.of(context)!.ourStory
-                ,style: const TextStyle(fontSize: 16, height: 1.5,color: Colors.white,fontFamily: 'Hellix'),
+              SizedBox(height: screenHeight * 0.02),
+              Text(
+                AppLocalizations.of(context)!.mission,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Hellix',
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-             Text(
-              AppLocalizations.of(context)!.mission,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                  fontFamily: 'Hellix'
+              SizedBox(height: screenHeight * 0.01),
+              Container(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                decoration: BoxDecoration(
+                  color: Colors.blue[600],
+                  borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.ourMission,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    height: 1.5,
+                    color: Colors.white,
+                    fontFamily: 'Hellix',
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.blue[600],
-                borderRadius: BorderRadius.circular(10),
+              SizedBox(height: screenHeight * 0.02),
+              Divider(color: Colors.grey[400]),
+              SizedBox(height: screenHeight * 0.02),
+              Text(
+                AppLocalizations.of(context)!.use,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Hellix',
+                ),
               ),
-              child:  Text(
-                AppLocalizations.of(context)!.ourMission
-                ,style: const TextStyle(fontSize: 16, height: 1.5,color: Colors.white,fontFamily: 'Hellix'),
+              SizedBox(height: screenHeight * 0.01),
+              Container(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                decoration: BoxDecoration(
+                  color: Colors.blue[600],
+                  borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.useto,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    height: 1.5,
+                    color: Colors.white,
+                    fontFamily: 'Hellix',
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Divider(color: Colors.grey[400]),
-            const SizedBox(height: 20),
-             Text(
-               AppLocalizations.of(context)!.use,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                  fontFamily: 'Hellix'
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.blue[600],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child:  Text(
-                AppLocalizations.of(context)!.useto,
-                style: const TextStyle(fontSize: 16, height: 1.5,color: Colors.white,fontFamily: 'Hellix'),
-              ),
-            ),
-            const SizedBox(height: 40),
-
-          ],
+              SizedBox(height: screenHeight * 0.04),
+            ],
+          ),
         ),
       ),
     );
-  }}
+  }
+}
