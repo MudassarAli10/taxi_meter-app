@@ -170,6 +170,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
     TextEditingController priceController = TextEditingController();
 
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -302,7 +303,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
 
   void _showLocationInputDialog() {
     showDialog(
-
+      barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
 
@@ -324,7 +325,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                     context: context,
                     apiKey: 'AIzaSyBZPNNxjrwEruh44L0o5oAMHQMuaiz-N_4',
                     // Use your actual API key
-                    components: [const Component(Component.country, 'pk')],
+                    components: [const Component(Component.country, 'ma')],
                     language: 'fr',
                   );
 

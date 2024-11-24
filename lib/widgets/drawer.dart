@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_meter_apps/screens/history_screen.dart';
-import 'package:taxi_meter_apps/screens/subscription_screen.dart';
 import 'package:taxi_meter_apps/screens/support.dart';
 import 'package:taxi_meter_apps/screens/testimonial.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -108,23 +107,7 @@ class DrawerWidget extends StatelessWidget {
               },
             ),
             // Subscription - Same as above
-            ListTile(
-              leading: const Icon(CupertinoIcons.hand_thumbsup_fill,
-                  color: Colors.white),
-              title: Text(
-                'Subscription',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Hellix',
-                    fontSize: width > 600 ? 18 : 16),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (contex) => const SubscriptionScreen()));
-              },
-            ),
+
             // Instagram Link - Adjust the padding based on screen size
             Padding(
               padding: EdgeInsets.only(
