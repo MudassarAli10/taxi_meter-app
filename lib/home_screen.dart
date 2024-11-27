@@ -5,7 +5,7 @@ import 'package:taxi_meter_apps/controller/language_change_controller.dart';
 import 'package:taxi_meter_apps/screens/google_map.dart';
 import 'package:taxi_meter_apps/widgets/drawer.dart';
 
-enum language { english, french }
+enum Language { english, french }
 
 class HomeScreen extends StatelessWidget {
   // Define a GlobalKey for the Scaffold
@@ -15,14 +15,16 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       key: _scaffoldKey, // Assign the key to Scaffold
       appBar: AppBar(
-        backgroundColor: Colors.blue[600],
+        backgroundColor: const Color(0xff1d366f),
         centerTitle: true,
-        title: const Text(
+        title:  Text(
           'Lynaro',
-          style: TextStyle(color: Colors.white, fontFamily: 'Hellix'),
+          style: TextStyle(color: Colors.white, fontFamily: 'Hellix',  fontSize: screenWidth * 0.07,),
         ),
         leading: IconButton(
           icon: const Icon(
@@ -45,17 +47,17 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.white,
                   size: 25,
                 ),
-                onSelected: (language item) {
-                  if (language.english.name == item.name) {
+                onSelected: (Language item) {
+                  if (Language.english.name == item.name) {
                     provider.changeLanguage(const Locale('en'));
                   } else {
                     provider.changeLanguage(const Locale('fr'));
                   }
                 },
                 itemBuilder: (BuildContext contex) =>
-                    <PopupMenuEntry<language>>[
+                    <PopupMenuEntry<Language>>[
                       PopupMenuItem(
-                        value: language.english,
+                        value: Language.english,
                         child: Row(
                           children: [
                             Image.asset(
@@ -69,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       PopupMenuItem(
-                        value: language.french,
+                        value: Language.french,
                         child: Row(
                           children: [
                             Image.asset(

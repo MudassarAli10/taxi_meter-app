@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -5,10 +7,10 @@ class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
 
   @override
-  _SubscriptionScreenState createState() => _SubscriptionScreenState();
+  SubscriptionScreenState createState() => SubscriptionScreenState();
 }
 
-class _SubscriptionScreenState extends State<SubscriptionScreen> {
+class SubscriptionScreenState extends State<SubscriptionScreen> {
   String selectedPlan = 'Annual'; // Default selected plan
 
   @override
@@ -89,7 +91,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ElevatedButton(
                   onPressed: () {
                     // Handle subscription logic
-                    print("Selected Plan: $selectedPlan");
+                    log("Selected Plan: $selectedPlan");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[500],

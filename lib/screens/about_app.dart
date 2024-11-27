@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:taxi_meter_apps/constant.dart';
 
 class AboutUsScreen extends StatelessWidget {
   const AboutUsScreen({super.key});
@@ -20,7 +21,7 @@ class AboutUsScreen extends StatelessWidget {
             fontSize: screenWidth * 0.06, // Responsive font size
           ),
         ),
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor: primaryColor,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
@@ -52,7 +53,7 @@ class AboutUsScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(screenWidth * 0.04),
                 decoration: BoxDecoration(
-                  color: Colors.blue[600],
+                  color: primaryColor,
                   borderRadius: BorderRadius.circular(screenWidth * 0.02),
                 ),
                 child: Text(
@@ -79,7 +80,7 @@ class AboutUsScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(screenWidth * 0.04),
                 decoration: BoxDecoration(
-                  color: Colors.blue[600],
+                  color: primaryColor,
                   borderRadius: BorderRadius.circular(screenWidth * 0.02),
                 ),
                 child: Text(
@@ -108,7 +109,7 @@ class AboutUsScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(screenWidth * 0.04),
                 decoration: BoxDecoration(
-                  color: Colors.blue[600],
+                  color: primaryColor,
                   borderRadius: BorderRadius.circular(screenWidth * 0.02),
                 ),
                 child: Text(

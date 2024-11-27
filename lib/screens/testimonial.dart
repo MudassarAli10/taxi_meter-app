@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:taxi_meter_apps/constant.dart';
 
 class Testimonial {
   final String name;
@@ -62,6 +63,8 @@ class TestimonialScreen extends StatelessWidget {
     ),
   ];
 
+   TestimonialScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -77,7 +80,7 @@ class TestimonialScreen extends StatelessWidget {
             fontSize: screenWidth * 0.06, // Responsive font size
           ),
         ),
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor:primaryColor,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
@@ -91,7 +94,7 @@ class TestimonialScreen extends StatelessWidget {
           horizontal: screenWidth * 0.04,
           vertical: screenHeight * 0.02,
         ),
-        color: Colors.blue[500],
+        color: primaryColor,
         child: ListView.builder(
           itemCount: testimonials.length,
           itemBuilder: (context, index) {
@@ -113,7 +116,7 @@ class TestimonialScreen extends StatelessWidget {
                       children: [
                         Icon(
                           CupertinoIcons.person,
-                          color: Colors.blue[600],
+                          color: primaryColor,
                           size: screenWidth * 0.08, // Responsive icon size
                         ),
                         SizedBox(width: screenWidth * 0.03),
@@ -123,7 +126,7 @@ class TestimonialScreen extends StatelessWidget {
                             fontSize: screenWidth * 0.045,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Hellix',
-                            color: Colors.blue[600],
+                            color:primaryColor,
                           ),
                         ),
                       ],
@@ -133,7 +136,7 @@ class TestimonialScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.location_on,
-                          color: Colors.blue[300],
+                          color: primaryColor,
                           size: screenWidth * 0.05,
                         ),
                         SizedBox(width: screenWidth * 0.02),
@@ -141,7 +144,7 @@ class TestimonialScreen extends StatelessWidget {
                           testimonial.city,
                           style: TextStyle(
                             fontSize: screenWidth * 0.04,
-                            color: Colors.blue[600],
+                            color: primaryColor,
                             fontFamily: 'Hellix',
                           ),
                         ),

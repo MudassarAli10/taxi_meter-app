@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constant.dart';
 import '../controller/trip.dart';
 import '../controller/trip_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -25,6 +26,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
       trips = loadedTrips;
     });
   }
+  String _formatElapsedTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return "${minutes}m ${remainingSeconds}s";
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +48,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             fontSize: screenWidth * 0.06, // Responsive font size
           ),
         ),
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor: primaryColor,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
@@ -67,7 +74,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             final trip = trips[index];
 
             return Card(
-              color: Colors.blue[500],
+              color: primaryColor,
               margin: EdgeInsets.all(screenWidth * 0.03), // Responsive margin
               child: Padding(
                 padding: EdgeInsets.all(screenWidth * 0.04),
@@ -91,7 +98,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       subtitle: Padding(
                         padding: EdgeInsets.only(top: screenHeight * 0.01),
                         child: Text(
-                          "${AppLocalizations.of(context)!.time}: ${trip.duration.inMinutes} min\n"
+                         // "${AppLocalizations.of(context)!.time}: ${trip.duration.inMinutes} min\n"
+                              "${AppLocalizations.of(context)!.time}: ${_formatElapsedTime(trip.elapsedTime)}\n" // Add this
                               "Distance: ${trip.distance.toStringAsFixed(2)} km\n"
                               "${AppLocalizations.of(context)!.price}: ${trip.price.toStringAsFixed(2)} DH",
                           style: TextStyle(

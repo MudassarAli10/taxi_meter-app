@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:taxi_meter_apps/constant.dart';
 
 import '../controller/trip.dart';
 import '../controller/trip_repository.dart';
@@ -43,6 +46,10 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
   Duration totalTime = Duration.zero; // Total trip duration
 
   StreamSubscription<Position>? positionStream;
+  bool showInitialButton = true;
+ // Timer? _timer;
+  Timer? _stopwatchTimer;
+  int elapsedSeconds = 0;
 
   @override
   void initState() {
@@ -55,13 +62,27 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
     positionStream?.cancel();
     super.dispose();
   }
+  void _startTimer() {
+    // Reset elapsed time
+    elapsedSeconds = 0;
 
+    _stopwatchTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        elapsedSeconds++;
+      });
+    });
+  }
+  void _stopTimer() {
+    _stopwatchTimer?.cancel();
+    _stopwatchTimer = null;
+  }
   //new
   Future<void> _startMeter() async {
     totalDistance = 0.0;
     totalTime = Duration.zero;
     totalPrice = basePrice;
-
+    // Start the timer
+    _startTimer();
     Position? lastPosition;
 
     positionStream = Geolocator.getPositionStream(
@@ -107,7 +128,11 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
   }
 
   void _stopMeter() async {
+    // Stop the timer
+    _stopTimer();
+
     positionStream?.cancel();
+
     setState(() {
       isMeterRunning = false;
     });
@@ -117,6 +142,8 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
       distance: totalDistance / 1000, // in kilometers
       duration: totalTime,
       price: totalPrice,
+      elapsedTime: elapsedSeconds, // Add elapsed time
+
     );
 
     // Save to shared preferences
@@ -127,23 +154,25 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
     final updatedTrips = trips.take(5).toList();
     await TripHistoryRepository.saveTrips(updatedTrips);
 
-    // Display Snackbar with results
+    // Display Snack bar with results
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.blue[500],
+      backgroundColor: primaryColor,
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        // Ensures content is spaced out
         children: [
           Expanded(
             child: Text(
               '${AppLocalizations.of(context)!.tripFinish}\n'
-                  '${AppLocalizations.of(context)!.time}: ${totalTime
-                  .inMinutes} min\n'
+                  '${AppLocalizations.of(context)!.time}: ${elapsedSeconds ~/
+                  60} min ${elapsedSeconds % 60} sec\n' // Timer result
                   'Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km\n'
                   '${AppLocalizations.of(context)!.price}: ${totalPrice
                   .toStringAsFixed(2)} DH',
               style: const TextStyle(
-                  fontFamily: 'Hellix', color: Colors.white, fontSize: 20),
+                fontFamily: 'Hellix',
+                color: Colors.white,
+                fontSize: 20,
+              ),
             ),
           ),
           TextButton(
@@ -151,7 +180,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
               // Dismiss the SnackBar when the close button is pressed
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               setState(() {
-                // Hide the "Go to Live Location" button and show the "Play" button
+                // Reset state variables or perform cleanup as needed
                 isPermissionGranted = true;
                 polylineCoordinates.clear();
               });
@@ -163,7 +192,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
           ),
         ],
       ),
-      duration: const Duration(minutes: 25), // SnackBar won't auto-dismiss
+      duration: const Duration(minutes: 1000),
     ));
   }
     void _showBasePriceDialog() {
@@ -180,16 +209,17 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
             cursorColor: Colors.white,
             controller: priceController,
             keyboardType: TextInputType.number,
+            style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               prefixIcon: const Icon(
-                CupertinoIcons.money_euro,
+                Icons.money,
                 color: Colors.white,
               ),
               hintText: AppLocalizations.of(context)!.basePrice,
               hintStyle:
                   const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
               filled: true,
-              fillColor: Colors.blue[600],
+              fillColor: primaryColor,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide.none,
@@ -201,7 +231,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
@@ -214,9 +244,10 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                   });
                   Navigator.pop(context);
                 },
-                child:  Text(
+                child: Text(
                   AppLocalizations.of(context)!.setPrice,
-                  style:const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
+                  style: const TextStyle(
+                      color: Colors.white, fontFamily: 'Hellix'),
                 ),
               ),
             ),
@@ -252,7 +283,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
       polyline = Polyline(
         polylineId: const PolylineId("route"),
         points: polylineCoordinates,
-        color: Colors.blue,
+        color: primaryColor,
         width: 5,
       );
     });
@@ -297,7 +328,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
         _showLocationInputDialog();
       });
     } catch (e) {
-      print("Error getting location: $e");
+      log("Error getting location: $e");
     }
   }
 
@@ -306,7 +337,6 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
       barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
-
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
@@ -318,6 +348,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
           children: [
             TextField(
               cursorColor: Colors.white,
+              style: const TextStyle(color: Colors.white),
               controller: _destinationController,
               onTap: () async {
                 try {
@@ -334,7 +365,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                     _getRoute(prediction.description!);
                   }
                 } catch (e) {
-                  print("Error in autocomplete: $e");
+                  log("Error in autocomplete: $e");
                 }
               },
               decoration: InputDecoration(
@@ -343,10 +374,12 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                   color: Colors.white,
                 ),
                 hintText: AppLocalizations.of(context)!.destination,
+
                 hintStyle:
                     const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
                 filled: true,
-                fillColor: Colors.blue[600],
+                fillColor: primaryColor,
+
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
@@ -360,7 +393,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
@@ -370,15 +403,16 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                     _getRoute(
                         destination); // Pass the destination text to _getRoute
                   } else {
-                    print("Please enter a destination.");
+                    log("Please enter a destination.");
                   }
 
                   Navigator.pop(context);
                   _showBasePriceDialog();
                 },
-                child:  Text(
+                child: Text(
                   AppLocalizations.of(context)!.route,
-                  style:const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
+                  style: const TextStyle(
+                      color: Colors.white, fontFamily: 'Hellix'),
                 ),
               ),
             ),
@@ -413,13 +447,13 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
           polyline = Polyline(
             polylineId: const PolylineId("route"),
             points: polylineCoordinates,
-            color: Colors.blue,
+            color: primaryColor,
             width: 5,
           );
         });
       }
     } catch (e) {
-      print("Error fetching route: $e");
+      if (kDebugMode) print('Error Fetching Route: $e');
     }
   }
 
@@ -462,20 +496,25 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width and height
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Define a scaling factor for text and padding
+    final scaleFactor = screenWidth / 375; // Base width is 375 (common width for a standard phone)
+    final paddingScaleFactor = screenHeight / 812; // Base height is 812 (standard for iPhone X)
+
     return Scaffold(
       body: Stack(
         children: [
+          // Google Map widget
           GoogleMap(
             onMapCreated: _onMapCreated,
             initialCameraPosition:
-                CameraPosition(target: _currentPosition, zoom: 13),
+            CameraPosition(target: _currentPosition, zoom: 13),
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
             markers: {
-              // Marker(
-              //   markerId: const MarkerId('currentLocation'),
-              //   position: _currentPosition,
-              // ),
               if (destinationLatLng != null)
                 Marker(
                   markerId: const MarkerId('destination'),
@@ -487,59 +526,110 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
               if (polylineCoordinates.isNotEmpty) polyline,
             },
           ),
-          if (isMeterRunning)
-            Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
-              child: Card(
-                color: Colors.blue[600],
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("${AppLocalizations.of(context)!.time}: ${totalTime.inMinutes} min", style: const TextStyle(
-                          fontFamily: 'Hellix',
-                          color: Colors.white,
-                          fontSize: 20)),
-                      Text(
-                          "Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km", style: const TextStyle(
-                          fontFamily: 'Hellix',
-                          color: Colors.white,
-                          fontSize: 20)),
-                      Text(
-                        "${AppLocalizations.of(context)!.price}: ${totalPrice.toStringAsFixed(2)} DH",
-                        style: const TextStyle(
-                            fontFamily: 'Hellix',
-                            color: Colors.white,
-                            fontSize: 20),
-                      ),
-                    ],
+
+          // Show initial text button in the center of the screen
+          if (showInitialButton)
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16 * paddingScaleFactor,
+                    horizontal: 32 * paddingScaleFactor,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  _getCurrentLocation();
+                  setState(() {
+                    // Hide initial button and show other actions
+                    showInitialButton = false;
+                    isPermissionGranted = false;
+                  });
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.whereAreYouGoing,
+                  style: TextStyle(
+                    fontFamily: 'Hellix',
+                    fontSize: 30 * scaleFactor,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
+
+          // Show the meter card and floating button only when the initial button is clicked
+          if (!showInitialButton) ...[
+            if (isMeterRunning)
+              Positioned(
+                bottom: 16 * paddingScaleFactor,
+                left: 16 * paddingScaleFactor,
+                right: 16 * paddingScaleFactor,
+                child: Card(
+                  color: primaryColor,
+                  elevation: 4,
+                  child: Padding(
+                    padding: EdgeInsets.all(16 * paddingScaleFactor),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "${AppLocalizations.of(context)!.time}: ${elapsedSeconds ~/ 60} min ${elapsedSeconds % 60} sec",
+                          style: TextStyle(
+                            fontFamily: 'Hellix',
+                            color: Colors.white,
+                            fontSize: 20 * scaleFactor,
+                          ),
+                        ),
+                        Text(
+                          "Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km",
+                          style: TextStyle(
+                            fontFamily: 'Hellix',
+                            color: Colors.white,
+                            fontSize: 20 * scaleFactor,
+                          ),
+                        ),
+                        Text(
+                          "${AppLocalizations.of(context)!.price}: ${totalPrice.toStringAsFixed(2)} DH",
+                          style: TextStyle(
+                            fontFamily: 'Hellix',
+                            color: Colors.white,
+                            fontSize: 20 * scaleFactor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ],
       ),
-      floatingActionButton: isPermissionGranted
+
+      // Floating action button logic
+      floatingActionButton: !showInitialButton
+          ? (isPermissionGranted
           ? FloatingActionButton(
-              backgroundColor: Colors.blue[400],
-              onPressed: () {
-                _getCurrentLocation();
-                setState(() {
-                  // Hide the "Go to Live Location" button and show the "Play" button
-                  isPermissionGranted = false;
-                });
-              },
-              child: const Icon(Icons.my_location, color: Colors.white),
-            )
+        backgroundColor: primaryColor,
+        onPressed: () {
+          _getCurrentLocation();
+          setState(() {
+            isPermissionGranted = false;
+          });
+        },
+        child: const Icon(Icons.my_location, color: Colors.white),
+      )
           : FloatingActionButton(
-        backgroundColor: Colors.blue[400],
-              onPressed: isMeterRunning ? _stopMeter : _startMeter,
-              child: Icon(isMeterRunning ? Icons.stop : Icons.play_arrow ,color: Colors.white,),
-            ),
+        backgroundColor: primaryColor,
+        onPressed: isMeterRunning ? _stopMeter : _startMeter,
+        child: Icon(
+          isMeterRunning ? Icons.stop : Icons.play_arrow,
+          color: Colors.white,
+        ),
+      ))
+          : null, // No floating button initially
     );
   }
 }

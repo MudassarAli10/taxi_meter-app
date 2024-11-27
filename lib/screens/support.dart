@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_meter_apps/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -11,7 +12,7 @@ class SupportScreen extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: primaryColor,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.support,
@@ -21,7 +22,7 @@ class SupportScreen extends StatelessWidget {
             fontSize: screenWidth * 0.06, // Responsive font size
           ),
         ),
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor:primaryColor,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
@@ -65,7 +66,7 @@ class SupportScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade600,
+                  backgroundColor: primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(screenWidth * 0.03), // Responsive radius
                   ),

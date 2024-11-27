@@ -33,10 +33,14 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             locale: locale == ''
                 ? const Locale('en')
-                : provider.appLocale == null
-                    ? const Locale('en')
-                    : provider
-                        .appLocale, // Set a default locale if appLocale is null
+                : provider
+                .appLocale ?? const Locale('en'),
+            // locale: locale == ''
+            //     ? const Locale('en')
+            //     : provider.appLocale == null
+            //         ? const Locale('en')
+            //         : provider
+            //             .appLocale, // Set a default locale if appLocale is null
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,

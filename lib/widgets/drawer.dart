@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taxi_meter_apps/constant.dart';
+import 'package:taxi_meter_apps/screens/faq_screen.dart';
 import 'package:taxi_meter_apps/screens/history_screen.dart';
 import 'package:taxi_meter_apps/screens/support.dart';
 import 'package:taxi_meter_apps/screens/testimonial.dart';
@@ -20,7 +22,7 @@ class DrawerWidget extends StatelessWidget {
 
     return Drawer(
       child: Container(
-        color: Colors.blue[600], // Blue background color
+       color: primaryColor, // Blue background color
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -104,6 +106,23 @@ class DrawerWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (contex) => const SupportScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(CupertinoIcons.question_circle,
+                  color: Colors.white),
+              title: Text(
+                "FAQ",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Hellix',
+                    fontSize: width > 600 ? 18 : 16),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (contex) =>  FAQScreen()));
               },
             ),
             // Subscription - Same as above
