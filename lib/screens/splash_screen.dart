@@ -43,7 +43,7 @@ class SplashScreenState extends State<SplashScreen> {
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  image: AssetImage('assets/logo/meter_logo.jpeg'),
+                  image: AssetImage('assets/logo/meter_logo.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),

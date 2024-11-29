@@ -104,7 +104,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
           setState(() {
             totalDistance += distance;
             totalPrice =
-                basePrice + (totalDistance / 1000) * 2.5; // e.g., 2.5 DH per km
+                basePrice + (totalDistance / 1000) * 10.5; // e.g., 2.5 DH per km
             totalTime +=
                 const Duration(seconds: 5); // Assuming updates every 5 seconds
           });
@@ -133,6 +133,10 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
 
     positionStream?.cancel();
 
+    // Store the necessary variables locally to avoid async gap issues
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final localizations = AppLocalizations.of(context);
+
     setState(() {
       isMeterRunning = false;
     });
@@ -143,7 +147,6 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
       duration: totalTime,
       price: totalPrice,
       elapsedTime: elapsedSeconds, // Add elapsed time
-
     );
 
     // Save to shared preferences
@@ -155,107 +158,140 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
     await TripHistoryRepository.saveTrips(updatedTrips);
 
     // Display Snack bar with results
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: primaryColor,
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              '${AppLocalizations.of(context)!.tripFinish}\n'
-                  '${AppLocalizations.of(context)!.time}: ${elapsedSeconds ~/
-                  60} min ${elapsedSeconds % 60} sec\n' // Timer result
-                  'Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km\n'
-                  '${AppLocalizations.of(context)!.price}: ${totalPrice
-                  .toStringAsFixed(2)} DH',
-              style: const TextStyle(
-                fontFamily: 'Hellix',
-                color: Colors.white,
-                fontSize: 20,
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        backgroundColor: primaryColor,
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                '${localizations!.tripFinish}\n'
+                    '${localizations.time}: ${elapsedSeconds ~/ 60} min ${elapsedSeconds % 60} sec\n' // Timer result
+                    'Distance: ${(totalDistance / 1000).toStringAsFixed(2)} km\n'
+                    '${localizations.price}: ${totalPrice.toStringAsFixed(2)} DH',
+                style: const TextStyle(
+                  fontFamily: 'Hellix',
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
               ),
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              // Dismiss the SnackBar when the close button is pressed
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              setState(() {
-                // Reset state variables or perform cleanup as needed
-                isPermissionGranted = true;
-                polylineCoordinates.clear();
-              });
-            },
-            child: const Text(
-              'Close',
-              style: TextStyle(color: Colors.white),
+            TextButton(
+              onPressed: () {
+                // Dismiss the SnackBar when the close button is pressed
+                scaffoldMessenger.hideCurrentSnackBar();
+                setState(() {
+                  // Reset state variables or perform cleanup as needed
+                  isPermissionGranted = true;
+                  polylineCoordinates.clear();
+                });
+              },
+              child: const Text(
+                'Close',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        duration: const Duration(minutes: 1000),
       ),
-      duration: const Duration(minutes: 1000),
-    ));
+    );
   }
-    void _showBasePriceDialog() {
+
+
+  void _showBasePriceDialog() {
     TextEditingController priceController = TextEditingController();
+    String? errorMessage; // To store the validation error message
 
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          // title: const Text("Set Base Price"),
-          content: TextField(
-            cursorColor: Colors.white,
-            controller: priceController,
-            keyboardType: TextInputType.number,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              prefixIcon: const Icon(
-                Icons.money,
-                color: Colors.white,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    cursorColor: Colors.white,
+                    controller: priceController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(
+                        Icons.payments_outlined,
+                        color: Colors.white,
+                      ),
+                      hintText: AppLocalizations.of(context)!.basePrice,
+                      hintStyle: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Hellix',
+                      ),
+                      filled: true,
+                      fillColor: primaryColor,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      errorText: errorMessage, // Show validation error
+                    ),
+                    onChanged: (value) {
+                      // Validate the input and update the error message
+                      setState(() {
+                        if (value.isEmpty || !RegExp(r'^[0-9]*\.?[0-9]*$').hasMatch(value)) {
+                          errorMessage = AppLocalizations.of(context)!.errorMessage;
+                        } else {
+                          errorMessage = null; // Clear error for valid input
+                        }
+                      });
+                    },
+                  ),
+                ],
               ),
-              hintText: AppLocalizations.of(context)!.basePrice,
-              hintStyle:
-                  const TextStyle(color: Colors.white, fontFamily: 'Hellix'),
-              filled: true,
-              fillColor: primaryColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-          actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )),
-                onPressed: () {
-                  setState(() {
-                    basePrice = double.tryParse(priceController.text) ?? 0.0;
-                    // Ensure the UI updates after setting the price
-                    totalPrice =
-                        basePrice; // Reset totalPrice after base price is set
-                  });
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  AppLocalizations.of(context)!.setPrice,
-                  style: const TextStyle(
-                      color: Colors.white, fontFamily: 'Hellix'),
+              actions: [
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (errorMessage != null || priceController.text.isEmpty) {
+                        setState(() {
+                          errorMessage = "Please enter a valid price\n (e.g., 1.70, 2.00).";
+                        });
+                        return; // Prevent closing the dialog if invalid
+                      }
+
+                      setState(() {
+                        basePrice = double.tryParse(priceController.text) ?? 0.0;
+                        totalPrice = basePrice; // Reset totalPrice after base price is set
+                      });
+                      Navigator.pop(context); // Close the dialog on valid input
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.setPrice,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Hellix',
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );
   }
+
 
   void _updatePolyline(Position position) {
     if (polylineCoordinates.isEmpty) return;
@@ -293,13 +329,14 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
     var status = await Permission.location.status;
 
     if (status.isDenied) {
-      await Permission.location.request();
+      status = await Permission.location.request();
     }
 
-    if (await Permission.location.isGranted) {
+    if (status.isGranted) {
       setState(() {
         isPermissionGranted = true;
       });
+    //  _getCurrentLocation(); // Immediately fetch location after permission is granted
     } else if (status.isPermanentlyDenied) {
       openAppSettings();
     }
@@ -492,6 +529,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+
   }
 
   @override
@@ -553,7 +591,7 @@ class _GoogleMapActivityState extends State<GoogleMapActivity> {
                   AppLocalizations.of(context)!.whereAreYouGoing,
                   style: TextStyle(
                     fontFamily: 'Hellix',
-                    fontSize: 30 * scaleFactor,
+                    fontSize: 17 * scaleFactor,
                     color: Colors.white,
                   ),
                 ),

@@ -15,7 +15,7 @@
   "route": "Obtenir l'itinéraire",
   "basePrice": "Prix de base du compteur",
   "setPrice": "Ajouter le prix ",
-  "time": "temps",
+  "time": "Temps",
   "tripFinish": "Voyage terminé",
   "price": "Prix",
   "noTripYet": "Pas encore de voyage",
@@ -36,6 +36,7 @@
   "whatHappensUsingLynaro": "Que se passe-t-il si le chauffeur voit que j’utilise Lynaro ?",
   "whatHappensUsingLynaroAnswer": "Un taxi est tenu par la loi d’utiliser son propre compteur. Si son compteur ne fonctionne pas, alors il ne peut légalement pas travailler. Si le chauffeur refuse que vous utilisiez Lynaro pendant le trajet, cela peut indiquer qu’il a l’intention de vous facturer un tarif injustifié. Lynaro est là pour garantir une transparence totale et protéger vos droits en tant que passager. Si le chauffeur n’a rien à cacher, il n’aura aucun problème avec l’utilisation de l’application. ",
   "isLynaroAvailableInAllCities": "Lynaro est-elle disponible dans toutes les villes du Maroc ?",
-  "isLynaroAvailableInAllCitiesAnswer": "Oui, Lynaro est disponible dans toutes les villes du Maroc. Que vous soyez à Casablanca, Marrakech, Tanger, Rabat ou dans toute autre ville, l’application fonctionne pour vous aider à estimer le coût de vos trajets en taxi. Nous nous engageons à offrir une expérience cohérente et fiable, peu importe où vous vous trouvez."
+  "isLynaroAvailableInAllCitiesAnswer": "Oui, Lynaro est disponible dans toutes les villes du Maroc. Que vous soyez à Casablanca, Marrakech, Tanger, Rabat ou dans toute autre ville, l’application fonctionne pour vous aider à estimer le coût de vos trajets en taxi. Nous nous engageons à offrir une expérience cohérente et fiable, peu importe où vous vous trouvez.",
+  "errorMessage": "Veuillez entrer un prix valide\n(Ex : 1.70, 2.00 etc...)"
 
 }

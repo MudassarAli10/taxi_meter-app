@@ -36,5 +36,6 @@
   "whatHappensUsingLynaro": "What happens if the driver sees that I'm using Lynaro?",
   "whatHappensUsingLynaroAnswer": "A taxi is required by law to use its own meter. If his meter does not work, then he legally cannot work. If the driver refuses to allow you to use Lynaro during the trip, this may indicate that he intends to charge you an unjustified fare. Lynaro is here to ensure complete transparency and protect your rights as a passenger. If the driver has nothing to hide, he will have no problem using the application",
   "isLynaroAvailableInAllCities": "Is Lynaro available in all cities in Morocco?",
-  "isLynaroAvailableInAllCitiesAnswer": "Yes, Lynaro is available in all cities in Morocco. Whether you are in Casablanca, Marrakech, Tangier, Rabat or any other city, the application works to help you estimate the cost of your taxi trips. We are committed to providing a consistent and reliable experience, no matter where you are."
+  "isLynaroAvailableInAllCitiesAnswer": "Yes, Lynaro is available in all cities in Morocco. Whether you are in Casablanca, Marrakech, Tangier, Rabat or any other city, the application works to help you estimate the cost of your taxi trips. We are committed to providing a consistent and reliable experience, no matter where you are.",
+  "errorMessage": "Please enter a valid price \n(e.g., 1.70, 2.00)."
 }

@@ -122,16 +122,17 @@ class DrawerWidget extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (contex) =>  FAQScreen()));
+                        builder: (contex) => const FAQScreen()));
               },
             ),
+
             // Subscription - Same as above
 
             // Instagram Link - Adjust the padding based on screen size
             Padding(
               padding: EdgeInsets.only(
                 left: 16.0,
-                top: 280,
+                top: 230,
                 bottom: height * 0.1, // Position it dynamically based on screen height
               ),
               child: ListTile(
